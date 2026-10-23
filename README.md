@@ -150,6 +150,13 @@ bash build.sh
 
 Si no le pasas una llave tuya (`KEYSTORE`, `KEYSTORE_PASS`), el script crea una local. Un APK firmado con otra llave no puede actualizar el `apk/` publicado: primero hay que desinstalar el anterior.
 
+## Autores
+
+- **[danielj2109](https://github.com/danielj2109)**: idea, diseño de NOVA X y pruebas en la caja.
+- **Claude** (Anthropic): coautor. Investigación del malware, código y scripts.
+
+Si te sirvió, deja una ⭐ en el repositorio.
+
 ## Licencia
 
 Código y medios (logo, animaciones, sonidos): **MIT**, ver [LICENSE](LICENSE).
