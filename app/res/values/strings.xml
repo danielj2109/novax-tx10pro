@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="botones_desc">Botones del control de NOVA X: volumen estilo TV, panel rápido, cambiar de app y botón de encendido.</string>
+    <string name="botones_label">Botones NOVA X</string>
+</resources>

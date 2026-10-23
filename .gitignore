@@ -1,0 +1,6 @@
+platform-tools/
+platform-tools.zip
+registros/
+app/build/
+*.keystore
+*.jks
