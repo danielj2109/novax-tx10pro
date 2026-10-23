@@ -1,0 +1,10 @@
+# los scripts de la caja deben quedar con fin de linea Unix
+*.sh text eol=lf
+caja/*.txt text eol=lf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+*.apk binary
+*.bmp binary
+*.mp4 binary
+*.mp3 binary
+*.otf binary
