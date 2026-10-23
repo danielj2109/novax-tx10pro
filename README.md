@@ -5,6 +5,8 @@ Limpia el **malware que viene de fábrica** en la caja Android TV **TX10 Pro (Al
 > [!WARNING]
 > Esto modifica tu caja. Se probó en **una** TX10 Pro (firmware `H313-Q-v1.0`). El instalador revisa tu caja antes de hacer cualquier cosa y **no toca nada si no es igual**. Aun así, lo usas bajo tu propia responsabilidad.
 
+> 🇬🇧 **English summary** — [jump below](#english)
+
 ---
 
 ## ¿Qué hace?
@@ -149,6 +151,26 @@ bash build.sh
 ```
 
 Si no le pasas una llave tuya (`KEYSTORE`, `KEYSTORE_PASS`), el script crea una local. Un APK firmado con otra llave no puede actualizar el `apk/` publicado: primero hay que desinstalar el anterior.
+
+## English
+
+**NOVA X for TX10 Pro** removes the **factory-installed malware** found on the *TX10 Pro* Android TV box (Allwinner **H313**, firmware `H313-Q-v1.0`, real Android 10 that reports itself as "Android 13") and turns the box into **NOVA X**: its own home screen, settings and remote-control features.
+
+**The malware.** The firmware ships a hidden system app, `com.android.netservice` (in `/system/app/netserevice-release/`), signed with the public AOSP *platform test key*. Together with `com.android.assistant.setting.iknew`, it silently downloads and installs other apps that run as the system user (uid 1000). One of them sends the box's MAC address and serial number to an analytics server every few minutes. Others can install apps, manage accounts and draw over other apps. They reinstall each other, so removing just one does not work. Full report, package list and SHA-256 hashes: [docs/MALWARE.md](docs/MALWARE.md).
+
+**What the tool does**
+1. **Cleans the malware** in the right order: it first removes the hidden installer from `/system` (with a backup), then uninstalls every payload, reboots and checks that nothing comes back.
+2. **Installs NOVA X** (optional): home screen, its own settings (Wi-Fi, sound, display, apps, real storage), a quick side panel inside any app, a recent-apps bar (hold Home), TV-style volume, full power-off with a sleep timer, and AdGuard DNS ad blocking.
+3. **System extras** (optional, advanced): boot logo and animation, remote power button → NOVA X power-off, mouse button → settings.
+
+The installer first **identifies the box** and refuses to change anything if it is not the tested hardware/firmware. Option 5 restores the original state.
+
+**How to use it** (Windows 10/11, PC and box on the same network)
+1. On the box: *Settings → Device Preferences → About → Build* (press OK 7 times) → *Developer options* → enable *USB debugging* (and *Network debugging* / *ADB over network* if present).
+2. On the PC: *Code → Download ZIP*, extract, double-click **`INSTALAR.bat`**, accept the debugging prompt on the TV and choose from the menu (the interface is in Spanish: **1** = clean malware, **2** = install NOVA X, **4** = everything, **5** = restore).
+3. When done, turn debugging off again: *mouse button → Información → Depuración por red → Desactivada*.
+
+⚠️ Tested on **one** box. Use at your own risk. If you have a similar box (another H313 model) and the installer refuses it, open an issue with the log file from the `registros` folder.
 
 ## Autores
 
