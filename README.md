@@ -42,6 +42,7 @@ Detalles técnicos: [docs/MALWARE.md](docs/MALWARE.md).
 - **Logo de encendido** NOVA X y **animación de arranque** con sonido.
 - **Botón de encendido** del control → abre la pregunta de apagado de NOVA X.
 - **Botón del mouse** → abre Ajustes y el panel rápido (y deja de mostrar el puntero o abrir Prime Video).
+- **Reloj de respaldo**: NOVA X guarda la hora cada minuto y, si la caja se apaga de golpe (corte de luz, cable flojo), al arrancar la recupera **sin necesitar internet**. Sin esto, la caja arranca creyendo que es 2024 y las apps no conectan hasta que haya internet estable.
 
 Todo se puede deshacer con la opción **5. Restaurar** del instalador.
 
@@ -81,7 +82,7 @@ En la caja, con el control:
 ```
   1. Limpiar malware (recomendado)
   2. Instalar NOVA X
-  3. Extras de sistema: logo y botones (avanzado)
+  3. Extras de sistema: logo, botones y reloj de respaldo (avanzado)
   4. Todo: 1 + 2 + 3
   5. Restaurar como venia
   0. Salir
@@ -114,6 +115,7 @@ El botón de encendido y el del mouse funcionan así solo si instalaste los **ex
 
 ## Si algo sale mal
 
+- **El WiFi pierde datos o se corta aunque la señal sea buena, y con cable va perfecto.** Revisa el **cargador**: debe ser de **5 V / 2 A** y hacer buen contacto. Un cable flojo apaga la caja de golpe (y le borra la fecha) y deja al WiFi sin energía suficiente.
 - **Hay internet pero YouTube, Hydra u otras apps no conectan.** Revisa la **fecha** (no solo la hora) en Ajustes → Fecha e idioma. Si dice 2024, la caja perdió la fecha al apagarse: NOVA X 3.1 la corrige sola en segundos. Si una app quedó dañada, bórrale los datos (Ajustes → Aplicaciones).
 - **La caja arranca pero el instalador no la encuentra.** Puede que haya cambiado de IP. Mírala en Ajustes → Red y escríbela en el instalador.
 - **La pantalla queda en negro después del logo, o la caja no se conecta al WiFi.** Conecta la caja al router con **cable de red**, desconéctala de la corriente y vuelve a conectarla, espera 2 minutos y corre el instalador: suele encontrarla por el cable. Elige **5. Restaurar**.
@@ -163,7 +165,7 @@ Si no le pasas una llave tuya (`KEYSTORE`, `KEYSTORE_PASS`), el script crea una 
 **What the tool does**
 1. **Cleans the malware** in the right order: it first removes the hidden installer from `/system` (with a backup), then uninstalls every payload, reboots and checks that nothing comes back.
 2. **Installs NOVA X** (optional): home screen, its own settings (Wi-Fi, sound, display, apps, real storage), a quick side panel inside any app, a recent-apps bar (hold Home), TV-style volume, full power-off with a sleep timer, and AdGuard DNS ad blocking.
-3. **System extras** (optional, advanced): boot logo and animation, remote power button → NOVA X power-off, mouse button → settings.
+3. **System extras** (optional, advanced): boot logo and animation, remote power button → NOVA X power-off, mouse button → settings, and a **backup clock**. The box has no RTC battery: after a power cut it boots in September 2024 and TLS breaks. NOVA X saves the time every minute and a boot script restores it, with no network needed.
 
 The installer first **identifies the box** and refuses to change anything if it is not the tested hardware/firmware. Option 5 restores the original state.
 

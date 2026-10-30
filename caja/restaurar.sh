@@ -12,6 +12,12 @@ mkdir -p $T/bl
 if [ -f $B/bootlogo.bmp ] && mount -t vfat -o rw /dev/block/by-name/bootloader $T/bl 2>/dev/null; then
   cat $B/bootlogo.bmp > $T/bl/bootlogo.bmp; sync; umount $T/bl; echo "LOGO=original"
 fi
+if [ -f /system/etc/init/novax_hora.rc ]; then
+  blockdev --setrw /dev/block/dm-0 2>/dev/null
+  nsenter -t 1 -m -- mount -o remount,rw / && rm -f /system/etc/init/novax_hora.rc /system/etc/novax_hora.sh; sync
+  nsenter -t 1 -m -- mount -o remount,ro / 2>/dev/null
+  echo "RELOJ_RESPALDO=quitado"
+fi
 pm enable com.google.android.tvlauncher >/dev/null 2>&1 && echo "INICIO_GOOGLE=activado"
 settings put global private_dns_mode opportunistic
 settings delete global novax_key_ajustes

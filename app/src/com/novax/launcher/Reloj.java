@@ -58,6 +58,30 @@ public class Reloj {
         });
     }
 
+    /** Reloj de respaldo: guarda la hora (segundos) en el almacenamiento que el sistema puede leer al arrancar,
+     *  /data/user_de/0/com.novax.launcher/files/hora.txt. El script /system/etc/novax_hora.sh la recupera tras un corte. */
+    static void guardar(Context c) {
+        if (mal()) return;                       // nunca guardar una fecha equivocada
+        try {
+            java.io.File dir = c.createDeviceProtectedStorageContext().getFilesDir();
+            java.io.File tmp = new java.io.File(dir, "hora.tmp"), f = new java.io.File(dir, "hora.txt");
+            java.io.FileOutputStream o = new java.io.FileOutputStream(tmp);
+            o.write(String.valueOf(System.currentTimeMillis() / 1000).getBytes());
+            o.getFD().sync(); o.close();
+            tmp.renameTo(f);
+            f.setReadable(true, false);
+            dir.setExecutable(true, false);
+            if (dir.getParentFile() != null) dir.getParentFile().setExecutable(true, false);
+        } catch (Exception e) { Log.w(TAG, "guardar: " + e); }
+    }
+
+    static final Runnable cadaMinuto = new Runnable() {
+        @Override public void run() {
+            if (BotonesService.instance != null) guardar(BotonesService.instance);
+            ui.postDelayed(this, 60000);
+        }
+    };
+
     static void restaurarDns(ContentResolver cr) {
         if ("1".equals(Settings.Global.getString(cr, "novax_dns_pausado"))) {
             put(cr, "private_dns_mode", "hostname");

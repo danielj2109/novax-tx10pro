@@ -195,7 +195,7 @@ function Instalar-NovaX {
 
 function Extras {
   Titulo "3. Extras de sistema (avanzado)"
-  Log "Cambia el logo de encendido y los botones de encendido y mouse del control." "Yellow"
+  Log "Cambia el logo de encendido, los botones de encendido y mouse del control, y agrega el reloj de respaldo." "Yellow"
   Log "Guarda respaldo de todo y se puede deshacer con la opcion 5, pero toca partes del sistema." "Yellow"
   $ok = Read-Host "Escribe SI para continuar"
   if ($ok -ne "SI") { Log "Extras omitidos."; return }
@@ -225,7 +225,7 @@ while ($true) {
   Write-Host ""
   Write-Host "  1. Limpiar malware (recomendado)"
   Write-Host "  2. Instalar NOVA X"
-  Write-Host "  3. Extras de sistema: logo y botones (avanzado)"
+  Write-Host "  3. Extras de sistema: logo, botones y reloj de respaldo (avanzado)"
   Write-Host "  4. Todo: 1 + 2 + 3"
   Write-Host "  5. Restaurar como venia"
   Write-Host "  0. Salir"
