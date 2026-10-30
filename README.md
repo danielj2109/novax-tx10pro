@@ -34,6 +34,7 @@ Detalles técnicos: [docs/MALWARE.md](docs/MALWARE.md).
 | **Apagado** | Pregunta "¿Qué quieres hacer?", muestra una animación y apaga **del todo** (no reposo). |
 | **Temporizador** | Apaga la caja en 30 min, 1 h, 1 h 30 o 2 h. Avisa 60 s antes. |
 | **Bloqueo de anuncios** | DNS de AdGuard para toda la caja. |
+| **Guardián del reloj** | La caja no tiene pila de reloj y al prender cree que es 2024. NOVA X deja la hora automática siempre activa y, si la fecha está mal, pausa AdGuard hasta que la hora se corrige (si no, YouTube y otras apps no conectan). |
 | **Botón Netflix** | Abre la app que tú elijas (o Netflix, si no eliges ninguna). |
 
 ### 3. Extras (opcional, avanzado)
@@ -113,6 +114,7 @@ El botón de encendido y el del mouse funcionan así solo si instalaste los **ex
 
 ## Si algo sale mal
 
+- **Hay internet pero YouTube, Hydra u otras apps no conectan.** Revisa la **fecha** (no solo la hora) en Ajustes → Fecha e idioma. Si dice 2024, la caja perdió la fecha al apagarse: NOVA X 3.1 la corrige sola en segundos. Si una app quedó dañada, bórrale los datos (Ajustes → Aplicaciones).
 - **La caja arranca pero el instalador no la encuentra.** Puede que haya cambiado de IP. Mírala en Ajustes → Red y escríbela en el instalador.
 - **La pantalla queda en negro después del logo, o la caja no se conecta al WiFi.** Conecta la caja al router con **cable de red**, desconéctala de la corriente y vuelve a conectarla, espera 2 minutos y corre el instalador: suele encontrarla por el cable. Elige **5. Restaurar**.
 - **Nada funciona.** Modo de recuperación: con la caja desconectada, mete un palillo en el hueco **AV** hasta sentir un clic, mantenlo oprimido, conecta la corriente y **suelta apenas salga el logo**. En el menú elige **Wipe data/factory reset**. Esto borra tus apps, pero no el malware del sistema: después corre otra vez la limpieza.

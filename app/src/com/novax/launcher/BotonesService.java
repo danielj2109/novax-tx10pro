@@ -65,6 +65,10 @@ public class BotonesService extends AccessibilityService {
     protected void onServiceConnected() {
         instance = this;
         AjustesActivity.ensureLocation(this);
+        Reloj.vigilar(this);
+        registerReceiver(new android.content.BroadcastReceiver() {
+            @Override public void onReceive(android.content.Context c, Intent in) { Reloj.vigilar(c); }
+        }, new android.content.IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
         if (wakeRx == null) {
             wakeRx = new android.content.BroadcastReceiver() {
                 @Override public void onReceive(android.content.Context c, Intent in) {

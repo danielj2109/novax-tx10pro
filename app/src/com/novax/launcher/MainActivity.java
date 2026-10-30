@@ -103,7 +103,7 @@ public class MainActivity extends Activity {
             Date d = new Date();
             String h = new SimpleDateFormat("h:mm", Locale.US).format(d);
             int hr = Integer.parseInt(new SimpleDateFormat("H", Locale.US).format(d));
-            tClock.setText(h + (hr < 12 ? " a. m." : " p. m."));
+            tClock.setText(Reloj.mal() ? "Ajustando la hora…" : h + (hr < 12 ? " a. m." : " p. m."));
             ui.postDelayed(this, 15000);
         }
     };

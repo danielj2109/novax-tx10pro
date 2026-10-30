@@ -846,16 +846,10 @@ public class AjustesActivity extends Activity {
     void sistema() {
         title("Fecha e idioma", new SimpleDateFormat("EEEE d 'de' MMMM, h:mm a", new Locale("es", "CO")).format(new Date()));
         section("HORA");
-        int auto = 1;
-        try { auto = Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME); } catch (Exception ignored) {}
-        final boolean isAuto = auto != 0;
-        action("Hora automática (internet)", isAuto ? "Activada" : "Desactivada", new Runnable() {
-            public void run() {
-                putGlobal(Settings.Global.AUTO_TIME, isAuto ? "0" : "1");
-                putGlobal(Settings.Global.AUTO_TIME_ZONE, isAuto ? "0" : "1");
-                show("sistema"); enterPanel();
-            }
-        });
+        info("Hora automática", "Siempre activada");
+        TextView nota = u.text("Esta caja no tiene pila de reloj: al prender toma la hora de internet.", false, 14, Ui.MUTED);
+        LinearLayout.LayoutParams ln = new LinearLayout.LayoutParams(-2, -2); ln.topMargin = u.px(2); ln.bottomMargin = u.px(8);
+        panel.addView(nota, ln);
         String f = null;
         try { f = Settings.System.getString(getContentResolver(), Settings.System.TIME_12_24); } catch (Exception ignored) {}
         final boolean h24 = "24".equals(f);
