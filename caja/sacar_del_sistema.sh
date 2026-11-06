@@ -9,6 +9,6 @@ B=$(basename "$D")
 for f in "$D"/*.apk; do cmp -s "$f" "$Q/$B/$(basename "$f")" || { echo "RESPALDO NO COINCIDE"; exit 1; }; done
 blockdev --setrw /dev/block/dm-0 2>/dev/null
 nsenter -t 1 -m -- mount -o remount,rw / || { echo "NO SE PUDO ABRIR EL SISTEMA"; exit 1; }
-rm -rf "$D"; sync
+mv "$D" "$Q/$B.sacada" 2>/dev/null || rm -r "$D"; sync
 nsenter -t 1 -m -- mount -o remount,ro / 2>/dev/null
 [ -d "$D" ] && echo "SIGUE: $D" || echo "SACADA: $D (respaldo en $Q/$B)"

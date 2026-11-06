@@ -70,12 +70,18 @@ En la caja, con el control:
 4. Activa **Depuración por USB**. Si ves **Depuración por red** o **ADB por red**, actívala también.
 5. Anota la **IP** de la caja: **Ajustes → Red** (por ejemplo `192.168.1.35`).
 
-### Paso 3. Corre el instalador
+### Paso 3. Descarga las herramientas de Android
 
-1. En la carpeta, doble clic en **`INSTALAR.bat`**.
-   - Si Windows muestra "Windows protegió su PC": **Más información → Ejecutar de todas formas**.
-2. La primera vez descarga las herramientas oficiales de Android (de Google), unos pocos MB.
-3. Escribe la IP de la caja, o solo **Enter** para que la busque.
+El instalador usa **ADB**, la herramienta oficial de Google para hablar con equipos Android.
+Descarga **SDK Platform-Tools for Windows** desde la página oficial
+(<https://developer.android.com/tools/releases/platform-tools>) y descomprímelo **dentro de la carpeta del proyecto**,
+para que quede `novax-tx10pro\platform-tools\adb.exe`. (Si te olvidas, el instalador te abre esa página.)
+
+### Paso 4. Corre el instalador
+
+1. En la carpeta, **clic derecho en `instalar.ps1` → Ejecutar con PowerShell**.
+   (En Windows 11, si no lo ves: **Mostrar más opciones → Ejecutar con PowerShell**.)
+2. Escribe la **IP de la caja** (Paso 2, punto 5).
 4. **Mira la tele**: acepta **"¿Permitir la depuración?"** y marca **"Permitir siempre desde este equipo"**.
 5. El instalador revisa que tu caja sea compatible y muestra el menú:
 
@@ -91,7 +97,7 @@ En la caja, con el control:
 Recomendado: **1** y luego **2**. Si quieres todo, **4**.
 **No toques el control mientras trabaja.** La caja se reinicia sola cuando hace falta.
 
-### Paso 4. Cierra la puerta al terminar
+### Paso 5. Cierra la puerta al terminar
 
 Apaga la depuración, para que nadie en tu red pueda entrar a la caja:
 **botón del mouse → Información → Depuración por red → Desactivada.**
@@ -118,11 +124,18 @@ El botón de encendido y el del mouse funcionan así solo si instalaste los **ex
 - **El WiFi pierde datos o se corta aunque la señal sea buena, y con cable va perfecto.** Revisa el **cargador**: debe ser de **5 V / 2 A** y hacer buen contacto. Un cable flojo apaga la caja de golpe (y le borra la fecha) y deja al WiFi sin energía suficiente.
 - **Hay internet pero YouTube, Hydra u otras apps no conectan.** Revisa la **fecha** (no solo la hora) en Ajustes → Fecha e idioma. Si dice 2024, la caja perdió la fecha al apagarse: NOVA X 3.1 la corrige sola en segundos. Si una app quedó dañada, bórrale los datos (Ajustes → Aplicaciones).
 - **La caja arranca pero el instalador no la encuentra.** Puede que haya cambiado de IP. Mírala en Ajustes → Red y escríbela en el instalador.
-- **La pantalla queda en negro después del logo, o la caja no se conecta al WiFi.** Conecta la caja al router con **cable de red**, desconéctala de la corriente y vuelve a conectarla, espera 2 minutos y corre el instalador: suele encontrarla por el cable. Elige **5. Restaurar**.
+- **La pantalla queda en negro después del logo, o la caja no se conecta al WiFi.** Conecta la caja al router con **cable de red**, desconéctala de la corriente y vuelve a conectarla, espera 2 minutos y corre el instalador. Como la pantalla no se ve, busca la IP de la caja en la **lista de equipos conectados de tu router** (en su app o en su página, suele aparecer como "android-…" o con la MAC que empieza por la de la caja). Elige **5. Restaurar**.
 - **Nada funciona.** Modo de recuperación: con la caja desconectada, mete un palillo en el hueco **AV** hasta sentir un clic, mantenlo oprimido, conecta la corriente y **suelta apenas salga el logo**. En el menú elige **Wipe data/factory reset**. Esto borra tus apps, pero no el malware del sistema: después corre otra vez la limpieza.
 - Cada vez que usas el instalador queda un registro en la carpeta `registros`. Si abres un *issue* en GitHub, adjúntalo (no trae datos personales).
 
 ## Preguntas
+
+**¿Por qué mi antivirus dice que es un troyano?** Es una **falsa alarma**. Windows Defender juzga los archivos nuevos
+de internet por cómo se comportan, y un programa que se conecta por ADB a un equipo Android, usa *root* y borra apps del
+sistema se parece a un virus aunque haga lo contrario. Todo el código es visible en este repositorio: los scripts
+(`instalar.ps1` y `caja/*.sh`) son texto que puedes leer, y NOVA X está compilado desde `app/`. No hay ningún ejecutable
+de Windows. Si tu antivirus lo bloquea, puedes revisar los archivos en <https://www.virustotal.com> o descargarlo de nuevo
+más adelante: la falsa alarma se reportó a Microsoft.
 
 **¿Borra mis apps?** No. Solo quita el malware de la lista y deja todo lo demás.
 
@@ -142,7 +155,7 @@ caja/         scripts que corren en la caja (sh)
 apk/          NOVA X compilado
 media/        logo de encendido y animación de arranque
 docs/         informe del malware
-instalar.ps1  instalador de Windows (lo abre INSTALAR.bat)
+instalar.ps1  instalador de Windows (clic derecho → Ejecutar con PowerShell)
 ```
 
 Para compilar se necesita el SDK de Android (build-tools con `dx` y la plataforma 29) y un JDK:
@@ -171,7 +184,7 @@ The installer first **identifies the box** and refuses to change anything if it 
 
 **How to use it** (Windows 10/11, PC and box on the same network)
 1. On the box: *Settings → Device Preferences → About → Build* (press OK 7 times) → *Developer options* → enable *USB debugging* (and *Network debugging* / *ADB over network* if present).
-2. On the PC: *Code → Download ZIP*, extract, double-click **`INSTALAR.bat`**, accept the debugging prompt on the TV and choose from the menu (the interface is in Spanish: **1** = clean malware, **2** = install NOVA X, **4** = everything, **5** = restore).
+2. On the PC: *Code → Download ZIP*, extract, put Google's official *SDK Platform-Tools* in `platform-tools\`, right-click **`instalar.ps1` → Run with PowerShell**, type the box IP, accept the debugging prompt on the TV and choose from the menu (the interface is in Spanish: **1** = clean malware, **2** = install NOVA X, **4** = everything, **5** = restore).
 3. When done, turn debugging off again: *mouse button → Información → Depuración por red → Desactivada*.
 
 ⚠️ Tested on **one** box. Use at your own risk. If you have a similar box (another H313 model) and the installer refuses it, open an issue with the log file from the `registros` folder.

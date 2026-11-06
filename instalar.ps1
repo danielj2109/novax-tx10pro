@@ -16,15 +16,13 @@ function Pausa { Read-Host "`nEnter para continuar" | Out-Null }
 # ------------------------------------------------------------------ ADB
 function Asegurar-ADB {
   if (Test-Path $adb) { return $true }
-  Titulo "Descargando las herramientas de Android (platform-tools, de Google)"
-  $zip = Join-Path $dir "platform-tools.zip"
-  try {
-    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-    Invoke-WebRequest -UseBasicParsing "https://dl.google.com/android/repository/platform-tools-latest-windows.zip" -OutFile $zip
-    Expand-Archive -Force $zip $dir
-    Remove-Item $zip
-  } catch { Log "No se pudo descargar: $_" "Red"; return $false }
-  return (Test-Path $adb)
+  Titulo "Falta la carpeta platform-tools (herramientas oficiales de Android, de Google)"
+  Log "1. Se abre la pagina oficial de Google. Descarga 'SDK Platform-Tools for Windows'."
+  Log "2. Descomprime el ZIP aqui, para que quede la carpeta:"
+  Log "     $pt"
+  Log "3. Vuelve a abrir el instalador."
+  Start-Process "https://developer.android.com/tools/releases/platform-tools"
+  return $false
 }
 
 function A {
@@ -52,44 +50,13 @@ function Conectar($ip) {
   return "no"
 }
 
-function Buscar-Caja {
-  Titulo "Buscando la caja en tu red"
-  $ips = @()
-  try {
-    $ips = Get-NetIPAddress -AddressFamily IPv4 -ErrorAction Stop | Where-Object { $_.IPAddress -match "^(192\.168|10\.|172\.(1[6-9]|2\d|3[01]))" } | ForEach-Object { $_.IPAddress }
-  } catch {
-    $ips = (ipconfig | Select-String "IPv4" | ForEach-Object { ($_ -split ":")[-1].Trim() })
-  }
-  $found = @()
-  foreach ($me in $ips) {
-    $base = ($me -split "\.")[0..2] -join "."
-    Log "Revisando $base.1 - $base.254 ..."
-    $tasks = @{}
-    foreach ($n in 1..254) {
-      $c = New-Object System.Net.Sockets.TcpClient
-      $tasks["$base.$n"] = @($c, $c.ConnectAsync("$base.$n", 5555))
-    }
-    Start-Sleep -Milliseconds 2500
-    foreach ($k in $tasks.Keys) {
-      $t = $tasks[$k]
-      if ($t[1].Status -eq "RanToCompletion" -and $t[0].Connected) { $found += $k }
-      $t[0].Close()
-    }
-  }
-  return $found
-}
-
 function Elegir-Caja {
   & $adb kill-server 2>&1 | Out-Null
   & $adb start-server 2>&1 | Out-Null
-  $ip = Read-Host "Escribe la IP de la caja (la ves en la caja: Ajustes > Red) o solo Enter para buscarla"
-  $lista = @()
-  if ($ip) { $lista = @($ip) } else { $lista = Buscar-Caja }
-  if ($lista.Count -eq 0) {
-    Log "No encontre ninguna caja con la depuracion por red prendida." "Red"
-    Log "Revisa el paso 2 de las instrucciones (README) y que la caja y el PC esten en la misma red."
-    return $false
-  }
+  Log "La IP de la caja se ve en la caja: Ajustes > Red (o en NOVA X: Ajustes > Informacion)."
+  $ip = ""
+  while (-not ($ip -match "^\d{1,3}(\.\d{1,3}){3}$")) { $ip = (Read-Host "Escribe la IP de la caja (ejemplo 192.168.1.35)").Trim() }
+  $lista = @($ip)
   foreach ($c in $lista) {
     for ($i = 1; $i -le 20; $i++) {
       $r = Conectar $c
