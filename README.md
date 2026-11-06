@@ -130,12 +130,7 @@ El botón de encendido y el del mouse funcionan así solo si instalaste los **ex
 
 ## Preguntas
 
-**¿Por qué mi antivirus dice que es un troyano?** Es una **falsa alarma**. Windows Defender juzga los archivos nuevos
-de internet por cómo se comportan, y un programa que se conecta por ADB a un equipo Android, usa *root* y borra apps del
-sistema se parece a un virus aunque haga lo contrario. Todo el código es visible en este repositorio: los scripts
-(`instalar.ps1` y `caja/*.sh`) son texto que puedes leer, y NOVA X está compilado desde `app/`. No hay ningún ejecutable
-de Windows. Si tu antivirus lo bloquea, puedes revisar los archivos en <https://www.virustotal.com> o descargarlo de nuevo
-más adelante: la falsa alarma se reportó a Microsoft.
+**¿Por qué mi antivirus dice que es un troyano?** Es una falsa alarma. Mira la sección [Aviso del antivirus](#aviso-del-antivirus).
 
 **¿Borra mis apps?** No. Solo quita el malware de la lista y deja todo lo demás.
 
@@ -146,6 +141,39 @@ más adelante: la falsa alarma se reportó a Microsoft.
 **¿Sirve para otras cajas?** Para otras cajas con el mismo chip **H313** puede funcionar, pero el instalador solo permite seguir si el firmware es igual al probado. Si tienes otra caja, abre un *issue* con el registro del instalador y lo revisamos.
 
 ---
+
+## Aviso del antivirus
+
+Algunas personas vieron esto al descargar el ZIP:
+
+> **Amenaza bloqueada — Caballo de Troya — Grave.** *Este programa es peligroso y ejecuta comandos de un atacante.*
+
+**Es una falsa alarma.** Este proyecto **no tiene ningún programa de Windows** (`.exe`, `.dll`): solo textos que se pueden leer
+(`instalar.ps1`, los scripts `caja/*.sh`, el README) y la app NOVA X para Android, compilada desde el código de `app/`.
+Las muestras del malware que analizamos **nunca se subieron** al repositorio: en [docs/MALWARE.md](docs/MALWARE.md) solo están sus nombres y huellas (hashes).
+
+### ¿Por qué pasa?
+
+Con los archivos nuevos que vienen de internet, Windows Defender no busca virus conocidos: **adivina** por lo que hace el
+código y por cuánta gente lo ha descargado. Un proyecto nuevo, que nadie conoce todavía, y que además **se conecta a un
+equipo Android, usa *root* y borra apps del sistema** (justo lo que hace falta para quitar el malware), se parece a un virus
+aunque haga lo contrario.
+
+### Qué cambiamos para evitarlo (desde la versión del 5 de noviembre de 2026)
+
+| Lo que podía parecer virus | Cómo quedó |
+|---|---|
+| El instalador **buscaba en toda la red** equipos con el puerto 5555 (así se propagan los virus que atacan cajas Android). | Ya no busca: **tú escribes la IP** de la caja, que se ve en Ajustes → Red. |
+| **Descargaba solo** las herramientas de Android y las descomprimía. | Ya no descarga nada: las bajas tú de la **página oficial de Google** (Paso 3). Si faltan, el instalador te abre esa página. |
+| `INSTALAR.bat` abría PowerShell **saltándose la protección de scripts** (truco típico de los virus). | Se eliminó: ahora es **clic derecho en `instalar.ps1` → Ejecutar con PowerShell**, la forma normal de Windows. |
+| Un script **borraba** la carpeta del malware en el sistema de la caja. | Ahora la **mueve a una cuarentena**, así que también se puede devolver. |
+
+### Si aun así tu antivirus lo bloquea
+
+1. Revisa los archivos tú mismo: son textos, ábrelos con el Bloc de notas. También puedes subir el ZIP a
+   <https://www.virustotal.com> y ver qué opinan decenas de antivirus.
+2. Descárgalo otra vez más adelante: la falsa alarma **se reportó a Microsoft**, y cuando la revisan deja de aparecer para todos.
+3. Si sigue apareciendo, abre un *issue* con el **nombre exacto de la amenaza**. Está en *Seguridad de Windows → Protección contra virus y amenazas → Historial de protección*, y es algo como `Trojan:Script/…`. Con ese nombre sabemos qué archivo le molesta.
 
 ## Para desarrolladores
 
@@ -186,6 +214,8 @@ The installer first **identifies the box** and refuses to change anything if it 
 1. On the box: *Settings → Device Preferences → About → Build* (press OK 7 times) → *Developer options* → enable *USB debugging* (and *Network debugging* / *ADB over network* if present).
 2. On the PC: *Code → Download ZIP*, extract, put Google's official *SDK Platform-Tools* in `platform-tools\`, right-click **`instalar.ps1` → Run with PowerShell**, type the box IP, accept the debugging prompt on the TV and choose from the menu (the interface is in Spanish: **1** = clean malware, **2** = install NOVA X, **4** = everything, **5** = restore).
 3. When done, turn debugging off again: *mouse button → Información → Depuración por red → Desactivada*.
+
+**Antivirus warning:** some Windows Defender installs flag the ZIP as a *Trojan*. It is a false positive (behaviour-based guess on a new, unknown download). The project has no Windows executables, only readable scripts. Details in Spanish: [Aviso del antivirus](#aviso-del-antivirus).
 
 ⚠️ Tested on **one** box. Use at your own risk. If you have a similar box (another H313 model) and the installer refuses it, open an issue with the log file from the `registros` folder.
 
