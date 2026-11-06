@@ -58,7 +58,12 @@ Todo se puede deshacer con la opción **5. Restaurar** del instalador.
 
 ### Paso 1. Descarga esta carpeta
 
-Arriba en esta página: **Code → Download ZIP**. Descomprímelo en tu PC, por ejemplo en `Descargas\novax-tx10pro`.
+Descarga el ZIP oficial desde **[Releases → la última versión](https://github.com/danielj2109/novax-tx10pro/releases/latest)**
+(archivo `NOVA-X-TX10Pro-v3.2.zip`, en *Assets*). Descomprímelo en tu PC, por ejemplo en `Descargas\novax-tx10pro`.
+
+> Usa ese ZIP y no *Code → Download ZIP*: el de Releases es siempre el mismo archivo, ya revisado por los antivirus.
+> Su huella SHA-256 es `1de556981d7186287fc5cfa75754d4c944d5940a913d5607b3e2cc1530977206`
+> (en PowerShell: `Get-FileHash NOVA-X-TX10Pro-v3.2.zip`).
 
 ### Paso 2. Prende la depuración en la caja
 
@@ -212,7 +217,7 @@ The installer first **identifies the box** and refuses to change anything if it 
 
 **How to use it** (Windows 10/11, PC and box on the same network)
 1. On the box: *Settings → Device Preferences → About → Build* (press OK 7 times) → *Developer options* → enable *USB debugging* (and *Network debugging* / *ADB over network* if present).
-2. On the PC: *Code → Download ZIP*, extract, put Google's official *SDK Platform-Tools* in `platform-tools\`, right-click **`instalar.ps1` → Run with PowerShell**, type the box IP, accept the debugging prompt on the TV and choose from the menu (the interface is in Spanish: **1** = clean malware, **2** = install NOVA X, **4** = everything, **5** = restore).
+2. On the PC: download `NOVA-X-TX10Pro-v3.2.zip` from [Releases](https://github.com/danielj2109/novax-tx10pro/releases/latest), extract, put Google's official *SDK Platform-Tools* in `platform-tools\`, right-click **`instalar.ps1` → Run with PowerShell**, type the box IP, accept the debugging prompt on the TV and choose from the menu (the interface is in Spanish: **1** = clean malware, **2** = install NOVA X, **4** = everything, **5** = restore).
 3. When done, turn debugging off again: *mouse button → Información → Depuración por red → Desactivada*.
 
 **Antivirus warning:** some Windows Defender installs flag the ZIP as a *Trojan*. It is a false positive (behaviour-based guess on a new, unknown download). The project has no Windows executables, only readable scripts. Details in Spanish: [Aviso del antivirus](#aviso-del-antivirus).
