@@ -58,7 +58,12 @@ Todo se puede deshacer con la opción **5. Restaurar** del instalador.
 
 ### Paso 1. Descarga esta carpeta
 
-Arriba en esta página: **Code → Download ZIP**. Descomprímelo en tu PC, por ejemplo en `Descargas\novax-tx10pro`.
+**[⬇ Descargar NOVA X (ZIP)](https://github.com/danielj2109/novax-tx10pro/archive/refs/heads/descargar.zip)**
+
+Descomprímelo en tu PC, por ejemplo en `Descargas\novax-tx10pro`.
+
+> Usa ese enlace y no *Code → Download ZIP*. Algunos Windows bloquean el enlace de *Code* con una falsa alarma
+> (ver [Aviso del antivirus](#aviso-del-antivirus)); el de arriba tiene exactamente los mismos archivos.
 
 ### Paso 2. Prende la depuración en la caja
 
@@ -212,7 +217,7 @@ The installer first **identifies the box** and refuses to change anything if it 
 
 **How to use it** (Windows 10/11, PC and box on the same network)
 1. On the box: *Settings → Device Preferences → About → Build* (press OK 7 times) → *Developer options* → enable *USB debugging* (and *Network debugging* / *ADB over network* if present).
-2. On the PC: *Code → Download ZIP*, extract, put Google's official *SDK Platform-Tools* in `platform-tools\`, right-click **`instalar.ps1` → Run with PowerShell**, type the box IP, accept the debugging prompt on the TV and choose from the menu (the interface is in Spanish: **1** = clean malware, **2** = install NOVA X, **4** = everything, **5** = restore).
+2. On the PC: [download the ZIP](https://github.com/danielj2109/novax-tx10pro/archive/refs/heads/descargar.zip) (not *Code → Download ZIP*, which some Windows installs block), extract, put Google's official *SDK Platform-Tools* in `platform-tools\`, right-click **`instalar.ps1` → Run with PowerShell**, type the box IP, accept the debugging prompt on the TV and choose from the menu (the interface is in Spanish: **1** = clean malware, **2** = install NOVA X, **4** = everything, **5** = restore).
 3. When done, turn debugging off again: *mouse button → Información → Depuración por red → Desactivada*.
 
 **Antivirus warning:** some Windows Defender installs flag the ZIP as a *Trojan*. It is a false positive (behaviour-based guess on a new, unknown download). The project has no Windows executables, only readable scripts. Details in Spanish: [Aviso del antivirus](#aviso-del-antivirus).
