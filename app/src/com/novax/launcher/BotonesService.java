@@ -66,10 +66,11 @@ public class BotonesService extends AccessibilityService {
         instance = this;
         AjustesActivity.ensureLocation(this);
         Reloj.vigilar(this);
+        Red.sinAhorro();
         Reloj.ui.removeCallbacks(Reloj.cadaMinuto);
         Reloj.ui.postDelayed(Reloj.cadaMinuto, 20000);
         registerReceiver(new android.content.BroadcastReceiver() {
-            @Override public void onReceive(android.content.Context c, Intent in) { Reloj.vigilar(c); }
+            @Override public void onReceive(android.content.Context c, Intent in) { Reloj.vigilar(c); Red.sinAhorro(); ui.postDelayed(new Runnable() { public void run() { Red.sinAhorro(); } }, 8000); }
         }, new android.content.IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
         if (wakeRx == null) {
             wakeRx = new android.content.BroadcastReceiver() {

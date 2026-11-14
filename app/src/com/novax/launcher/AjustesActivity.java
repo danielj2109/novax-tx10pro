@@ -304,7 +304,7 @@ public class AjustesActivity extends Activity {
     }
 
     /** A static info line: label on the left, value on the right. */
-    void info(String label, String value) {
+    TextView info(String label, String value) {
         LinearLayout r = new LinearLayout(this);
         r.setOrientation(LinearLayout.HORIZONTAL);
         r.setPadding(u.px(20), u.px(12), u.px(20), u.px(12));
@@ -317,6 +317,7 @@ public class AjustesActivity extends Activity {
         r.addView(v, new LinearLayout.LayoutParams(0, -2, 1.3f));
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-1, -2); lp.bottomMargin = u.px(6);
         panel.addView(r, lp);
+        return v;
     }
 
     /** A focusable action row. */
@@ -634,7 +635,14 @@ public class AjustesActivity extends Activity {
             String[] q = {"Muy débil", "Débil", "Buena", "Muy buena", "Excelente"};
             info("Señal", q[Math.max(0, Math.min(4, lvl))]);
             info("Dirección IP", ipStr(wi.getIpAddress()));
+            final TextView net = info("Internet", "Probando…");
+            new Thread(new Runnable() { public void run() {
+                final int ms = Red.probar();
+                ui.post(new Runnable() { public void run() { net.setText(Red.texto(ms)); net.setTextColor(ms >= 0 ? (ms < 500 ? 0xFF7BD88F : Ui.GOLD) : 0xFFFF7A7A); } });
+            } }).start();
+            info("Cambiar sola de red", "No · se queda en la que elijas");
         }
+
         section("PROTECCIÓN");
         String mode = Settings.Global.getString(getContentResolver(), "private_dns_mode");
         String spec = Settings.Global.getString(getContentResolver(), "private_dns_specifier");
@@ -721,9 +729,15 @@ public class AjustesActivity extends Activity {
             section("OPCIONES");
             if (have != null) action("Olvidar esta red", null, new Runnable() {
                 public void run() {
-                    boolean ok = wm.removeNetwork(have.networkId);
-                    if (ok) { try { wm.saveConfiguration(); } catch (Exception ignored) {} show("red"); }
-                    else { section("AVISO"); info("Android no deja olvidarla desde aquí", "usa Ajustes técnicos"); }
+                    if (wm.removeNetwork(have.networkId)) { try { wm.saveConfiguration(); } catch (Exception ignored) {} show("red"); return; }
+                    new Thread(new Runnable() { public void run() {
+                        final String r = Red.root(AjustesActivity.this, "olvidar", String.valueOf(have.networkId));
+                        ui.post(new Runnable() { public void run() {
+                            if (r.contains("true")) show("red");
+                            else { section("AVISO"); info("No se pudo olvidar", "Android no dejó"); }
+                        } });
+                    } }).start();
+
                 }
             });
             enterPanel();
@@ -781,25 +795,57 @@ public class AjustesActivity extends Activity {
         } else enterPanel();
     }
 
-    void connect(int id, final String ssid) {
+    /** Connect, pin the network (no switching on its own), then prove the internet works. */
+    void connect(final int id, final String ssid) {
         final WifiManager wm = wifi();
         sub("red");
-        title(ssid, null);
+        title(ssid, "Conectando la caja a esta red.");
         if (id == -1) {
             info("No se pudo guardar la red", "revisa la clave");
             enterPanel();
             return;
         }
-        boolean ok = wm.enableNetwork(id, true);
-        try { wm.saveConfiguration(); } catch (Exception ignored) {}
-        wm.reconnect();
-        info(ok ? "Conectando…" : "Android no aceptó la conexión", "");
+        section("PASOS");
+        final TextView p1 = info("1. Conectar al WiFi", "Conectando…");
+        final TextView p2 = info("2. Probar internet", "—");
+        final TextView p3 = info("3. Quedarse en esta red", "—");
+        new Thread(new Runnable() { public void run() {
+            final String r = Red.root(AjustesActivity.this, "fijar", String.valueOf(id));
+            ui.post(new Runnable() { public void run() {
+                if (r.contains("OK")) p3.setText("Sí ✓ no cambia sola");
+                else { p3.setText("No se pudo fijar"); wm.enableNetwork(id, true); try { wm.saveConfiguration(); } catch (Exception ignored) {} wm.reconnect(); }
+            } });
+        } }).start();
         ui.postDelayed(new Runnable() {
             int tries = 0;
             public void run() {
+                if (!"red".equals(parent)) return;            // the user left this page
                 WifiInfo wi = wm.getConnectionInfo();
-                if (wi != null && wi.getIpAddress() != 0 && ssid.equals(currentSsid())) { show("red"); return; }
-                if (++tries > 10) { sub("red"); title(ssid, null); info("No se pudo conectar", "¿la clave está bien?"); enterPanel(); return; }
+                String now = currentSsid();
+                if (wi != null && wi.getIpAddress() != 0 && ssid.equals(now)) {
+                    p1.setText("Conectada ✓"); p1.setTextColor(0xFF7BD88F);
+                    p2.setText("Probando…");
+                    new Thread(new Runnable() { public void run() {
+                        final int ms = Red.probar();
+                        ui.post(new Runnable() { public void run() {
+                            p2.setText(Red.texto(ms));
+                            p2.setTextColor(ms >= 0 ? (ms < 500 ? 0xFF7BD88F : Ui.GOLD) : 0xFFFF7A7A);
+                            section(ms >= 0 ? "LISTO" : "ATENCIÓN");
+                            info(ms >= 0 ? "Conectado correctamente" : "Conectado al WiFi, pero sin internet", ms >= 0 ? "✓" : "revisa el router");
+                            ui.postDelayed(new Runnable() { public void run() { if ("red".equals(parent)) { show("red"); enterPanel(); } } }, ms >= 0 ? 3500 : 6000);
+                        } });
+                    } }).start();
+                    return;
+                }
+                if (++tries > 16) {
+                    p1.setText(now != null && !ssid.equals(now) ? "Se fue a " + now : "No conectó");
+                    p1.setTextColor(0xFFFF7A7A);
+                    section("ATENCIÓN");
+                    info("No se pudo conectar", "¿la clave está bien?");
+                    enterPanel();
+                    return;
+                }
+                p1.setText("Conectando… " + (tries * 3 / 2) + " s");
                 ui.postDelayed(this, 1500);
             }
         }, 1500);

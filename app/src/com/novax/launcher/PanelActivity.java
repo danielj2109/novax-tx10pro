@@ -299,7 +299,14 @@ public class PanelActivity extends Activity {
             box.addView(ok);
             View g = new View(this); box.addView(g, new LinearLayout.LayoutParams(1, u.px(14)));
             if (have != null) row("Olvidar esta red", null, 0, new Runnable() {
-                public void run() { if (wm.removeNetwork(have.networkId)) { try { wm.saveConfiguration(); } catch (Exception ignored) {} } redes(); }
+                public void run() {
+                    if (wm.removeNetwork(have.networkId)) { try { wm.saveConfiguration(); } catch (Exception ignored) {} redes(); return; }
+                    status("Olvidando " + ssid + "…");
+                    new Thread(new Runnable() { public void run() {
+                        Red.root(PanelActivity.this, "olvidar", String.valueOf(have.networkId));
+                        ui.post(new Runnable() { public void run() { redes(); } });
+                    } }).start();
+                }
             });
             row("Volver", null, 0, new Runnable() { public void run() { redes(); } });
             focusFirst();
@@ -354,19 +361,36 @@ public class PanelActivity extends Activity {
         focusFirst();
     }
 
-    void connect(int id, final String ssid) {
+    void connect(final int id, final String ssid) {
         final WifiManager wm = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
         mode = "conectando";
         if (id == -1) { status("No se pudo guardar la red. Revisa la clave."); ui.postDelayed(new Runnable() { public void run() { red(ssid, true); } }, 2500); return; }
-        wm.enableNetwork(id, true);
-        try { wm.saveConfiguration(); } catch (Exception ignored) {}
-        wm.reconnect();
         status("Conectando a " + ssid + "…");
+        new Thread(new Runnable() { public void run() {
+            String r = Red.root(PanelActivity.this, "fijar", String.valueOf(id));
+            if (!r.contains("OK")) ui.post(new Runnable() { public void run() {
+                wm.enableNetwork(id, true); try { wm.saveConfiguration(); } catch (Exception ignored) {} wm.reconnect();
+            } });
+        } }).start();
         ui.postDelayed(new Runnable() {
             int tries = 0;
             public void run() {
-                if (ssid.equals(currentSsid(wm))) { status("Conectado a " + ssid + " ✓"); ui.postDelayed(new Runnable() { public void run() { build(); } }, 1500); return; }
-                if (++tries > 12) { status("No se pudo conectar. ¿La clave está bien?"); ui.postDelayed(new Runnable() { public void run() { red(ssid, true); } }, 2500); return; }
+                if (!"conectando".equals(mode)) return;
+                android.net.wifi.WifiInfo wi = wm.getConnectionInfo();
+                if (wi != null && wi.getIpAddress() != 0 && ssid.equals(currentSsid(wm))) {
+                    status("Conectado a " + ssid + " ✓\nProbando internet…");
+                    new Thread(new Runnable() { public void run() {
+                        final int ms = Red.probar();
+                        ui.post(new Runnable() { public void run() {
+                            if (!"conectando".equals(mode)) return;
+                            status((ms >= 0 ? "Conectado correctamente ✓" : "Conectado al WiFi, pero sin internet") + "\nInternet: " + Red.texto(ms));
+                            ui.postDelayed(new Runnable() { public void run() { if ("conectando".equals(mode)) build(); } }, ms >= 0 ? 3500 : 6000);
+                        } });
+                    } }).start();
+                    return;
+                }
+                if (++tries > 16) { status("No se pudo conectar a " + ssid + ". ¿La clave está bien?"); ui.postDelayed(new Runnable() { public void run() { red(ssid, true); } }, 3000); return; }
+                status("Conectando a " + ssid + "… " + (tries * 3 / 2) + " s");
                 ui.postDelayed(this, 1500);
             }
         }, 1500);
