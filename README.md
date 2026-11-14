@@ -28,6 +28,8 @@ Detalles técnicos: [docs/MALWARE.md](docs/MALWARE.md).
 |---|---|
 | **Inicio** | Tus apps como tarjetas grandes, con el color de cada app de fondo. |
 | **Ajustes propios** | WiFi (buscar redes, conectarte, olvidar), sonido, pantalla, fecha e idioma, apps, almacenamiento real y control remoto. |
+| **WiFi que se ve y se queda** | Al conectarte a una red ves cada paso: *Conectada ✓*, prueba de internet (*Funciona ✓ · 45 ms*) y *Conectado correctamente*. La red que eliges **queda fija**: la caja ya no se cambia sola a otra red guardada (por ejemplo de la 2.4 GHz a la 5G). En *Red* siempre ves si el internet funciona. |
+| **WiFi sin ahorro de energía** | El chip WiFi de esta caja (SSV6x5x) se pone muy lento con el ahorro de energía de Android. NOVA X lo apaga cada vez que el WiFi se conecta. |
 | **Panel rápido** | Dentro de cualquier app, el **botón del mouse** abre un panel a la derecha: cambiar de WiFi, volumen, bloqueo de anuncios, **apagado automático** e ir al inicio. |
 | **Cambiar de app** | **Mantén oprimida la casita** y sale una barra abajo con tus apps recientes. |
 | **Volumen de televisor** | Solo el número, arriba a la derecha. Si mantienes el botón, sube o baja rápido. |
@@ -126,7 +128,7 @@ El botón de encendido y el del mouse funcionan así solo si instalaste los **ex
 
 ## Si algo sale mal
 
-- **El WiFi pierde datos o se corta aunque la señal sea buena, y con cable va perfecto.** Revisa el **cargador**: debe ser de **5 V / 2 A** y hacer buen contacto. Un cable flojo apaga la caja de golpe (y le borra la fecha) y deja al WiFi sin energía suficiente.
+- **El WiFi pierde datos o se corta aunque la señal sea buena, y con cable va perfecto.** Prueba la red de **2.4 GHz** de tu router (la que no dice *5G*): el chip WiFi de esta caja funciona mucho mejor ahí. Elígela en *botón del mouse → WiFi* y NOVA X la deja fija. Revisa también el **cargador**: debe ser de **5 V / 2 A** y hacer buen contacto. Un cable flojo apaga la caja de golpe (y le borra la fecha) y deja al WiFi sin energía suficiente.
 - **Hay internet pero YouTube, Hydra u otras apps no conectan.** Revisa la **fecha** (no solo la hora) en Ajustes → Fecha e idioma. Si dice 2024, la caja perdió la fecha al apagarse: NOVA X 3.1 la corrige sola en segundos. Si una app quedó dañada, bórrale los datos (Ajustes → Aplicaciones).
 - **La caja arranca pero el instalador no la encuentra.** Puede que haya cambiado de IP. Mírala en Ajustes → Red y escríbela en el instalador.
 - **La pantalla queda en negro después del logo, o la caja no se conecta al WiFi.** Conecta la caja al router con **cable de red**, desconéctala de la corriente y vuelve a conectarla, espera 2 minutos y corre el instalador. Como la pantalla no se ve, busca la IP de la caja en la **lista de equipos conectados de tu router** (en su app o en su página, suele aparecer como "android-…" o con la MAC que empieza por la de la caja). Elige **5. Restaurar**.
